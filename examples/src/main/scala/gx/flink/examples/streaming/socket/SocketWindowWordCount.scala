@@ -15,7 +15,7 @@
  *
  */
 
-package gx.flink.streaming.socket
+package gx.flink.examples.streaming.socket
 
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.scala._

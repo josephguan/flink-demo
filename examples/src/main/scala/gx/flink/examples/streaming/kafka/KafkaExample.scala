@@ -15,8 +15,7 @@
  *
  */
 
-package gx.flink.streaming.kafka
-
+package gx.flink.examples.streaming.kafka
 
 import java.util.Properties
 

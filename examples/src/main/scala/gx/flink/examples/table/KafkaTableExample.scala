@@ -15,7 +15,7 @@
  *
  */
 
-package gx.flink.streaming.kafka
+package gx.flink.examples.table
 
 import org.apache.flink.api.common.typeinfo.Types
 import org.apache.flink.api.java.utils.ParameterTool
