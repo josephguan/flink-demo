@@ -15,73 +15,66 @@
  *
  */
 
-package gx.flink.examples.streaming.kafka
+package gx.flink.examples.streaming
 
 import org.apache.flink.api.common.restartstrategy.RestartStrategies
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.java.utils.ParameterTool
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.connectors.kafka.{FlinkKafkaConsumer09, FlinkKafkaProducer09}
 
-/**
-  * An example that shows how to read from and write to Kafka. This will read String messages
-  * from the input topic, prefix them by a configured prefix and output to the output topic.
-  *
-  * Please pass the following arguments to run the example:
-  * {{{
-  * --input-topic test-input
-  * --output-topic test-output
-  * --bootstrap.servers localhost:9092
-  * --zookeeper.connect localhost:2181
-  * --group.id myconsumer
-  * }}}
-  */
-object Kafka010Example {
+object Kafka09StreamWordCountExample {
 
   def main(args: Array[String]): Unit = {
 
-    // parse input arguments
+    // 1. parse input arguments
     val params = ParameterTool.fromArgs(args)
-
     if (params.getNumberOfParameters < 4) {
       println("Missing parameters!\n"
         + "Usage: Kafka --input-topic <topic> --output-topic <topic> "
-        + "--bootstrap.servers <kafka brokers> "
-        + "--zookeeper.connect <zk quorum> --group.id <some id> [--prefix <prefix>]")
+        + "--bootstrap.servers <kafka brokers> --zookeeper.connect <zk quorum> --group.id <some id>")
       return
     }
 
-    val prefix = params.get("prefix", "PREFIX:")
-
-
+    // 2. get the ExecutionEnvironment and change some settings
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.getConfig.disableSysoutLogging
     env.getConfig.setRestartStrategy(RestartStrategies.fixedDelayRestart(4, 10000))
-    // create a checkpoint every 5 seconds
-    env.enableCheckpointing(5000)
-    // make parameters available in the web interface
-    env.getConfig.setGlobalJobParameters(params)
+    env.enableCheckpointing(5000) // create a checkpoint every 5 seconds
+    env.getConfig.setGlobalJobParameters(params) // make parameters available in the web interface
 
-    // create a Kafka streaming source consumer for Kafka 0.10.x
+    // 3. create a Kafka streaming source consumer for Kafka 0.9.x
     val kafkaConsumer = new FlinkKafkaConsumer09(
       params.getRequired("input-topic"),
       new SimpleStringSchema,
       params.getProperties)
 
-    val messageStream = env
-      .addSource(kafkaConsumer)
-      .map(in => prefix + in)
+    // 4. get the input streaming
+    val messageStream = env.addSource(kafkaConsumer)
 
-    // create a Kafka producer for Kafka 0.10.x
+    // 5. word counting
+    val windowCounts = messageStream
+      .flatMap { w => w.split("\\s") }
+      .map { w => (w, 1) }
+      .keyBy(0) // key stream by word
+      .timeWindow(Time.seconds(5)) // tumbling time window of 1 minute length
+      .sum(1) // compute sum over carCnt
+
+    // 6. print the results with a single thread, rather than in parallel
+    windowCounts.print().setParallelism(1)
+
+    // 7. create a Kafka producer for Kafka 0.9.x
     val kafkaProducer = new FlinkKafkaProducer09(
       params.getRequired("output-topic"),
       new SimpleStringSchema,
       params.getProperties)
 
-    // write data into Kafka
-    messageStream.addSink(kafkaProducer)
+    // 8. write data into Kafka
+    windowCounts.map(x => s"${x._1},${x._2}").addSink(kafkaProducer)
 
-    env.execute("Kafka 0.9 Example")
+    // finally, execute the program
+    env.execute("Kafka 0.9 Json Streaming Example")
   }
 
 }

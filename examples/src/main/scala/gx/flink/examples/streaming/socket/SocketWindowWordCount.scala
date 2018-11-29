@@ -30,10 +30,10 @@ object SocketWindowWordCount {
     val port: Int = try {
       ParameterTool.fromArgs(args).getInt("port")
     } catch {
-      case e: Exception => {
+      case e: Exception =>
         System.err.println("No port specified. Please run 'SocketWindowWordCount --port <port>'")
         return
-      }
+
     }
 
     // get the execution environment

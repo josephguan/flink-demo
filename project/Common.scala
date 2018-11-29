@@ -21,15 +21,18 @@ import sbtassembly.AssemblyKeys._
 
 object Common {
 
+  val settings = commonSettings(false)
+  val settingsIncludeScala = commonSettings(true)
+
   private val prefix = "flink-snippet"
 
-  val settings: Seq[Def.Setting[_]] = Seq(
+  private def commonSettings(includeScala: Boolean = false): Seq[Def.Setting[_]] = Seq(
     version := "0.0.1",
     scalaVersion := "2.11.8",
     organization := "io.gx",
     javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8"),
     scalacOptions ++= Seq("-deprecation", "-unchecked"),
-    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false),
+    assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = includeScala),
     assemblyJarName in assembly := s"$prefix-${name.value}_${version.value}.jar"
   )
 

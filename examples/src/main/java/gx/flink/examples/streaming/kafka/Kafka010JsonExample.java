@@ -20,7 +20,6 @@ package gx.flink.examples.streaming.kafka;
 import org.apache.flink.api.common.typeinfo.Types;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.Kafka010JsonTableSink;
 import org.apache.flink.streaming.connectors.kafka.Kafka09JsonTableSink;
 import org.apache.flink.streaming.connectors.kafka.KafkaTableSink;
 import org.apache.flink.table.api.StreamTableEnvironment;
@@ -28,7 +27,6 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
 import org.apache.flink.table.descriptors.Schema;
-
 
 
 /**
