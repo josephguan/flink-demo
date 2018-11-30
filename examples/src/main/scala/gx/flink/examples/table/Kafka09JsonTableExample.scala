@@ -94,8 +94,8 @@ object Kafka09JsonTableExample {
     // 5. run query
     val sql =
       s"""SELECT $WORD_COL,
-          |TUMBLE_START($TIMESTAMP_COL, INTERVAL '5' second),
-          |TUMBLE_END($TIMESTAMP_COL, INTERVAL '5' second),
+          |TUMBLE_START($TIMESTAMP_COL, INTERVAL '$interval' second),
+          |TUMBLE_END($TIMESTAMP_COL, INTERVAL '$interval' second),
           |SUM($FREQUENCY_COL)
           |FROM $InputTable
           |GROUP BY TUMBLE($TIMESTAMP_COL, INTERVAL '$interval' second), $WORD_COL
