@@ -18,14 +18,17 @@
 package gx.kafka.producer
 
 import java.util.Properties
+import java.util.Date
+
 
 import gx.kafka.util._
+
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerRecord}
 
 import scala.util.Random
 
 
-object SimpleWordProducer {
+object SimpleJsonProducer {
 
   def main(args: Array[String]) {
 
@@ -37,7 +40,7 @@ object SimpleWordProducer {
 
     // 2. set default properties
     val props: Properties = params.getProperties
-    setDefault(props, "client.id", "SimpleWordProducer")
+    setDefault(props, "client.id", "SimpleJsonProducer")
     setDefault(props, "key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
     setDefault(props, "value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
 
@@ -51,11 +54,11 @@ object SimpleWordProducer {
     val interval: Int = 1000 / throughput
 
     (1 to records).foreach { i =>
-      val word1 = words(random.nextInt(len))
-      val word2 = words(random.nextInt(len))
-      val word3 = words(random.nextInt(len))
-      val msg = s"$word1 $word2 $word3"
-      val data = new ProducerRecord[String, String](topic, word1, msg)
+      val word = words(random.nextInt(len))
+      val frequency = random.nextInt(255)
+      val runtime = new Date().getTime
+      val msg = s"""{"word":"$word","frequency":$frequency,"currentTimestamp":$runtime}"""
+      val data = new ProducerRecord[String, String](topic, word, msg)
       producer.send(data)
       println(s"$msg")
       if (interval != 0) Thread.sleep(interval)
