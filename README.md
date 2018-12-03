@@ -17,6 +17,14 @@ If you want to operate specific sub-project, use ```project``` command in sbt sh
 ```
 
 
+## Subprojects Overview
+
+| subproject                          | description                                                 |
+|-------------------------------------|-------------------------------------------------------------|
+| [examples](./examples/README.md)    | Some examples for using flink in different ways.            |
+| [kafka](./kafka/README.md)          | Some kafka producers used in kafka-source flink examples.   |
+
+
 ## License
 This project is licensed under the terms of the Apache 2.0 license.
 
