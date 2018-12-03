@@ -6,6 +6,11 @@ for instance:
 > java -cp flink-snippet-kafka_0.0.1.jar gx.kafka.producer.SimpleCsvProducer --records 10000 --topic gxtest --bootstrap.servers zdh16en:9092
 ```
 
+monitor a kafka topic:
+```shell
+> kafka-console-consumer --bootstrap-server zdh16en:9092 --topic gxtestout  --zookeeper zdh16en:2181/kafka
+```
+
 
 ## Producer List
 

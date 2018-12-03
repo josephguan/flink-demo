@@ -127,7 +127,7 @@ object Kafka09CsvTableExample {
     result.insertInto(OutputTable)
 
     // finally, execute the program
-    env.execute("Kafka 0.9 Json Table Example")
+    env.execute("Kafka 0.9 Csv Table Example")
   }
 
 }
