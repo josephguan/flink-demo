@@ -24,7 +24,7 @@ package gx.flink.util
 
 class ThrottledIterator[T](source: Iterator[T], elementsPerSecond: Int) extends Iterator[T] with Serializable {
 
-  private var (sleepBatchSize, sleepBatchTime) = {
+  private val (sleepBatchSize, sleepBatchTime) = {
     if (elementsPerSecond >= 100) (elementsPerSecond / 20, 50)
     else if (elementsPerSecond >= 1) (1, 1000 / elementsPerSecond)
     else throw new IllegalArgumentException("'elements per second' must be positive and not zero")
