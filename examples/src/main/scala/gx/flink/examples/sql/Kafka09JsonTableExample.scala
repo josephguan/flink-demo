@@ -15,7 +15,7 @@
  *
  */
 
-package gx.flink.examples.table
+package gx.flink.examples.sql
 
 import org.apache.flink.api.common.typeinfo.Types
 import org.apache.flink.api.java.utils.ParameterTool

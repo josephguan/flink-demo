@@ -15,7 +15,7 @@
  *
  */
 
-package gx.flink.examples.table
+package gx.flink.examples.sql
 
 import gx.flink.customize.sources.Kafka09CsvTableSource
 import org.apache.flink.api.common.typeinfo.Types
