@@ -21,6 +21,7 @@ object Dependencies {
 
   private val flinkVersion = "1.6.1"
   private val kafkaVersion = "0.9.0.1"
+  private val sparkVersion = "2.4.0"
 
   val flink: Seq[ModuleID] = Seq(
     "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
@@ -32,6 +33,13 @@ object Dependencies {
 
   val kafka: Seq[ModuleID] = Seq(
     "org.apache.kafka" %% "kafka" % kafkaVersion
+  )
+
+  val spark: Seq[ModuleID] = Seq(
+    "org.apache.spark" %% "spark-core" % sparkVersion % "provided",
+    "org.apache.spark" %% "spark-streaming" % sparkVersion % "provided",
+    "org.apache.spark" %% "spark-hive" % sparkVersion % "provided",
+    "org.apache.spark" %% "spark-sql" % sparkVersion % "provided"
   )
 
   val test: Seq[ModuleID] = Seq(

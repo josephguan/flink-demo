@@ -12,9 +12,15 @@ lazy val kafka = project.in(file("kafka")).settings(name := "kafka").
   settings(libraryDependencies ++= Dependencies.test).
   settings(libraryDependencies ++= Dependencies.kafka)
 
+// spark streaming examples
+lazy val spark = project.in(file("spark")).settings(name := "spark").
+  settings(Common.settings: _*).
+  settings(libraryDependencies ++= Dependencies.test).
+  settings(libraryDependencies ++= Dependencies.spark)
+
 // aggregate all sub projects
 lazy val all = (project in file(".")).settings(name := "all").
   settings(Common.settings: _*).
-  aggregate(examples, kafka)
+  aggregate(examples, kafka, spark)
 
 

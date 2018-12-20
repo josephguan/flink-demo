@@ -1,8 +1,8 @@
 # Flink Snippet
 
-This is a collection of my codes related to apache-flink.
-It is an experiment lab for me to study flink.
-Currently, it includes some examples currently. In the near future, I will introduce more experiments...
+This is a collection of codes related to apache-flink.
+This is also an experiment lab for me to study flink.
+It includes some examples currently. In the near future, I will introduce more experiments...
 
 
 ## How To Compile
