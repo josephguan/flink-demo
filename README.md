@@ -1,7 +1,6 @@
-# Flink Snippet
+# Streaming Lab
 
-This is a collection of codes related to apache-flink.
-This is also an experiment lab for me to study flink.
+This is my experiment lab for studying streaming frameworks, such as flink, spark-streaming, etc.
 It includes some examples currently. In the near future, I will introduce more experiments...
 
 
@@ -21,8 +20,9 @@ If you want to operate specific sub-project, use ```project``` command in sbt sh
 
 | subproject                          | description                                                 |
 |-------------------------------------|-------------------------------------------------------------|
-| [examples](./examples/README.md)    | Some examples for using flink in different ways.            |
-| [kafka](./kafka/README.md)          | Some kafka producers used in kafka-source flink examples.   |
+| [flink](./flink/README.md)          | Some examples for using flink in different ways.            |
+| [kafka](./kafka/README.md)          | Some kafka producers used in flink and spark examples.      |
+| [spark](./spark/README.md)          | Some examples for spark streaming and structured streaming. |
 
 
 ## License

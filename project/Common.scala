@@ -24,8 +24,8 @@ object Common {
   val settings = commonSettings(false)
   val settingsIncludeScala = commonSettings(true)
 
-  private val prefix = "flink-snippet"
-
+  private val prefix = "streaming"
+  
   private def commonSettings(includeScala: Boolean = false): Seq[Def.Setting[_]] = Seq(
     version := "0.0.1",
     scalaVersion := "2.11.8",

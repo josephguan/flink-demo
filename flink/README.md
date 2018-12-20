@@ -1,4 +1,6 @@
-# SubProject: examples
+# SubProject: flink
+
+This is a collection of flink example codes.
 
 ## How to use
 executing the jar:
