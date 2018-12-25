@@ -5,7 +5,7 @@ This is a collection of example codes for spark streaming and structured streami
 ## How to use
 executing the jar:
 ```shell
-> ./ spark-submit --master local[1] --class gx.spark.examples.structured.StructuredNetworkWordCount streaming-spark_0.0.1.jar localhost 9999
+> ./spark-submit --master local[1] --class gx.spark.examples.structured.StructuredNetworkWordCount streaming-spark_0.0.1.jar localhost 9999
 ```
 
 
@@ -17,3 +17,5 @@ A word count example for socket source.
 
 ## SQL Examples
 
+#### [SqlNetworkWordCount](./src/main/scala/gx/spark/examples/sql/SqlNetworkWordCount.scala)
+A word count example for socket source, using sql with group by window statement.
