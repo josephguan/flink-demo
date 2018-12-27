@@ -19,3 +19,6 @@ A word count example for socket source.
 
 #### [SqlNetworkWordCount](./src/main/scala/gx/spark/examples/sql/SqlNetworkWordCount.scala)
 A word count example for socket source, using sql with group by window statement.
+
+#### [SqlJoinWithStatic](./src/main/scala/gx/spark/examples/sql/SqlJoinWithStatic.scala)
+A example for joining stream with static(dimension) table. 
