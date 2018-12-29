@@ -3,9 +3,8 @@ package gx.spark.examples.sql
 import java.sql.Timestamp
 import java.time.LocalDateTime
 
+import gx.spark.examples.util.TimeWord
 import org.apache.spark.sql.SparkSession
-
-case class TimeWord(word: String, time: Timestamp)
 
 object SqlNetworkWordCount {
 
