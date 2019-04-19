@@ -18,6 +18,12 @@ lazy val spark = project.in(file("spark")).settings(name := "spark").
   settings(libraryDependencies ++= Dependencies.test).
   settings(libraryDependencies ++= Dependencies.spark)
 
+// blink examples
+lazy val blink = project.in(file("blink")).settings(name := "blink").
+  settings(Common.settings: _*).
+  settings(libraryDependencies ++= Dependencies.test).
+  settings(libraryDependencies ++= Dependencies.blink)
+
 // aggregate all sub projects
 lazy val all = (project in file(".")).settings(name := "all").
   settings(Common.settings: _*).
