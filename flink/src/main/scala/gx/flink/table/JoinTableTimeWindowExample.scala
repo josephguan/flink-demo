@@ -23,8 +23,9 @@ object JoinTableTimeWindowExample {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     val tEnv = StreamTableEnvironment.create(env)
-    val now = new Date().getTime
 
+    // set up tables
+    val now = new Date().getTime
 
     val orderA = env.fromCollection(Seq(
       Order(1L, "beer", 3, new Timestamp(now)),
@@ -40,7 +41,7 @@ object JoinTableTimeWindowExample {
       .assignAscendingTimestamps(_.ut.getTime)
       .toTable(tEnv, 'id, 'name, 'age, 'ut.rowtime)
 
-    // union the two tables
+    // join the two tables with 5 seconds time window
     val result: DataStream[Result] = orderA.leftOuterJoin(userInfo)
       .where('user==='id && 'time >= 'ut - 5.seconds && 'time <= 'ut + 5.seconds)
       .select('user, 'product, 'amount, 'name, 'age, 'time)

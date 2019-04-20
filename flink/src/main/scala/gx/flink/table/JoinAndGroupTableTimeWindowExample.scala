@@ -6,7 +6,7 @@ import java.util.Date
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.Tumble
+import org.apache.flink.table.api.{Table, Tumble}
 import org.apache.flink.table.api.scala._
 
 
@@ -22,8 +22,9 @@ object JoinAndGroupTableTimeWindowExample {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     val tEnv = StreamTableEnvironment.create(env)
-    val now = new Date().getTime
 
+    // set up tables
+    val now = new Date().getTime
 
     val orderA = env.fromCollection(Seq(
       Order(1L, "beer", 1, new Timestamp(now)),
@@ -33,8 +34,7 @@ object JoinAndGroupTableTimeWindowExample {
       Order(1L, "diaper", 1, new Timestamp(now + 4000)),
       Order(1L, "diaper", 1, new Timestamp(now + 5000)),
       Order(3L, "rubber", 1, new Timestamp(now + 6000))
-    ))
-      .assignAscendingTimestamps(_.time.getTime)
+    )).assignAscendingTimestamps(_.time.getTime)
       .toTable(tEnv, 'user, 'product, 'amount, 'time.rowtime)
 
     val userInfo = env.fromCollection(Seq(
@@ -44,12 +44,12 @@ object JoinAndGroupTableTimeWindowExample {
       .assignAscendingTimestamps(_.ut.getTime)
       .toTable(tEnv, 'id, 'name, 'age, 'ut.rowtime)
 
-    // union the two tables
+    // join the two tables with time window
     val temp = orderA.leftOuterJoin(userInfo)
       .where('user === 'id && 'time >= 'ut - 50.seconds && 'time <= 'ut + 50.seconds)
       .select('user, 'product, 'amount, 'name, 'age, 'time)
-//      .toAppendStream[Result].toTable(tEnv, 'user, 'product, 'amount, 'name, 'age, 'time.rowtime)
 
+    // group by tumble window
     val result = temp.window(Tumble over 5.seconds on 'time as 'w)
       .groupBy('w)
       .select('w.start, 'amount.sum)

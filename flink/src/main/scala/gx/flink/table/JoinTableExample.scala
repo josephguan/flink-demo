@@ -27,7 +27,7 @@ object JoinTableExample {
       UserInfo(2L, "bobby", 15),
       UserInfo(3L, "catty", 20))).toTable(tEnv)
 
-    // union the two tables
+    // join the two tables
     val result: DataStream[Result] = orderA.leftOuterJoin(userInfo)
       .where('user==='id)
       .select('user, 'product, 'amount, 'name, 'age)

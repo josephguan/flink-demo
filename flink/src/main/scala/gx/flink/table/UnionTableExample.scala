@@ -11,7 +11,7 @@ import org.apache.flink.table.api.scala._
   *  - Convert DataStreams to Tables
   *  - Apply union, select, and filter operations
   */
-object StreamTableExample {
+object UnionTableExample {
 
   // *************************************************************************
   //     PROGRAM
