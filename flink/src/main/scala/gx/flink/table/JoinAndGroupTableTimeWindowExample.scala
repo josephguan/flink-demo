@@ -6,7 +6,7 @@ import java.util.Date
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.{Table, Tumble}
+import org.apache.flink.table.api.{Table, Tumble, Types}
 import org.apache.flink.table.api.scala._
 
 
@@ -52,7 +52,7 @@ object JoinAndGroupTableTimeWindowExample {
     // group by tumble window
     val result = temp.window(Tumble over 5.seconds on 'time as 'w)
       .groupBy('w)
-      .select('w.start, 'amount.sum)
+      .select('w.start, 'time.cast(Types.LONG).min.cast(Types.SQL_TIMESTAMP) as 'first_time, 'amount.sum)
       .toAppendStream[FinalResult]
 
     result.print()
@@ -70,6 +70,6 @@ object JoinAndGroupTableTimeWindowExample {
 
   case class Result(user: Long, product: String, amount: Int, name: String, age: Int, time: Timestamp)
 
-  case class FinalResult(startTime: Timestamp, amount: Int)
+  case class FinalResult(startTime: Timestamp, firstTime: Timestamp, amount: Int)
 
 }
