@@ -6,14 +6,24 @@ import java.util.Date
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
-import org.apache.flink.table.api.Types
 import org.apache.flink.table.api.scala._
+import org.apache.flink.table.functions.TableFunction
+
+class MySplitUDTF(lineSep: String, fieldSep: String) extends TableFunction[(Long, String, Int)] {
+  def eval(str: String): Unit = {
+    // use collect(...) to emit a row.
+    str.split(lineSep).foreach { line =>
+      val fields = line.split(fieldSep)
+      collect((fields(0).toLong, fields(1), fields(2).toInt))
+    }
+  }
+}
 
 
-object TableJoinDimension {
+object TableJoinDimensionOld {
 
   // *************************************************************************
-  //  PROGRAM: use temporal table function to implement join dimension table
+  //  PROGRAM:  use UDTF to implement join dimension table
   // *************************************************************************
 
   def main(args: Array[String]): Unit = {
@@ -23,16 +33,7 @@ object TableJoinDimension {
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     val tEnv = StreamTableEnvironment.create(env)
 
-    // set up tables
     val now = new Date().getTime
-
-
-    val userInfoTable = env.fromCollection(Seq(
-      UserInfo(1L, "andy", 10),
-      UserInfo(2L, "bobby", 15),
-      UserInfo(3L, "catty", 20)))
-      .toTable(tEnv, 'id, 'name, 'age, 'r_proctime.proctime)
-
     val orderA = env.fromCollection(Seq(
       Order(1L, "beer", 3, new Timestamp(now - 10000)),
       Order(1L, "diaper", 4, new Timestamp(now - 10000)),
@@ -42,29 +43,24 @@ object TableJoinDimension {
       Order(2L, "apple", 6, new Timestamp(now - 20000)),
       Order(4L, "rubber", 2, new Timestamp(now - 30000))))
       .assignAscendingTimestamps(_.time.getTime)
-      .toTable(tEnv, 'user, 'product, 'amount, 'time.rowtime, 'o_proctime.proctime)
+      .toTable(tEnv, 'user, 'product, 'amount, 'time.rowtime)
 
+    val userInfoCsv: String = "1,andy,10\n2,bobby,15"
 
-    // create temporal table function
-    val userInfo = userInfoTable
-      .createTemporalTableFunction('r_proctime, 'id)
+    // user defined table function
+    val split = new MySplitUDTF("\n",",")
 
-    // join with temporal table, which can be treated as dimension table
-    val result: DataStream[Result] = orderA.joinLateral(userInfo('o_proctime), 'user === 'id)
-      .select('user, 'product, 'amount, 'name, 'age, 'time, 'o_proctime, 'r_proctime)
+    // join the two tables
+    val result: DataStream[Result] = orderA.leftOuterJoinLateral(split(userInfoCsv) as ('id, 'name, 'age))
+      .where('user === 'id)
+      .select('user, 'product, 'amount, 'name, 'age)
       .toAppendStream[Result]
-
-    result.print()
 
     /** ***********************************************************
       * Problems:
-      *   1. Note, it only supports inner joins currently.
-      *   2. Sometimes, it can not join successfully. I'm not sure what's going on,
-      *      it seems be relative with the proctime.
+      *   it only supports inner joins currently.
       * ***********************************************************/
-    // force printing orderA table which can sometimes make its proctime a little bit latter than userInfoTable
-    orderA.toAppendStream[OrderTimed].print()
-    // userInfoTable.toAppendStream[UserInfoTimed].print()
+    result.print()
 
     env.execute()
   }
@@ -75,13 +71,8 @@ object TableJoinDimension {
 
   case class Order(user: Long, product: String, amount: Int, time: Timestamp)
 
-  case class OrderTimed(user: Long, product: String, amount: Int, time: Timestamp, pt: Timestamp)
-
   case class UserInfo(id: Long, name: String, age: Int)
 
-  case class UserInfoTimed(id: Long, name: String, age: Int, pt: Timestamp)
-
-  case class Result(user: Long, product: String, amount: Int, name: String, age: Int, time: Timestamp,
-                    o_proctime: Timestamp, r_proctime: Timestamp)
+  case class Result(user: Long, product: String, amount: Int, name: String, age: Int)
 
 }

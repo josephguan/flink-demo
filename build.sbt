@@ -18,8 +18,8 @@ val flinkVersion = "1.8.0"
 libraryDependencies ++= Seq(
   "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
   "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided",
-  "org.apache.flink" %% "flink-table-planner" % flinkVersion,
-  "org.apache.flink" %% "flink-table-api-scala-bridge" % flinkVersion,
+  "org.apache.flink" %% "flink-table-planner" % flinkVersion % "provided",
+  "org.apache.flink" %% "flink-table-api-scala-bridge" % flinkVersion % "provided",
   "org.scalatest" %% "scalatest" % "3.0.1" % "test")
 
 
