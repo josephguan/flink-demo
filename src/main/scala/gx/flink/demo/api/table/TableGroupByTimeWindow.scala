@@ -1,16 +1,16 @@
-package gx.flink.table
+package gx.flink.demo.api.table
 
 import java.sql.Timestamp
 import java.util.Date
 
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.TimeCharacteristic
-import org.apache.flink.streaming.api.scala.StreamExecutionEnvironment
-import org.apache.flink.table.api.{Table, Tumble, Types}
+import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.table.api.scala._
+import org.apache.flink.table.api.Tumble
 
 
-object JoinAndGroupTableTimeWindowExample {
+object TableGroupByTimeWindow {
 
   // *************************************************************************
   //     PROGRAM
@@ -22,10 +22,9 @@ object JoinAndGroupTableTimeWindowExample {
     val env = StreamExecutionEnvironment.getExecutionEnvironment
     env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
     val tEnv = StreamTableEnvironment.create(env)
-
-    // set up tables
     val now = new Date().getTime
 
+    // set up tables
     val orderA = env.fromCollection(Seq(
       Order(1L, "beer", 1, new Timestamp(now)),
       Order(1L, "diaper", 1, new Timestamp(now + 1000)),
@@ -37,23 +36,11 @@ object JoinAndGroupTableTimeWindowExample {
     )).assignAscendingTimestamps(_.time.getTime)
       .toTable(tEnv, 'user, 'product, 'amount, 'time.rowtime)
 
-    val userInfo = env.fromCollection(Seq(
-      UserInfo(1L, "andy", 10, new Timestamp(now)),
-      UserInfo(2L, "bobby", 15, new Timestamp(now + 1000)),
-      UserInfo(3L, "catty", 20, new Timestamp(now + 2000))))
-      .assignAscendingTimestamps(_.ut.getTime)
-      .toTable(tEnv, 'id, 'name, 'age, 'ut.rowtime)
-
-    // join the two tables with time window
-    val temp = orderA.leftOuterJoin(userInfo)
-      .where('user === 'id && 'time >= 'ut - 50.seconds && 'time <= 'ut + 50.seconds)
-      .select('user, 'product, 'amount, 'name, 'age, 'time)
-
-    // group by tumble window
-    val result = temp.window(Tumble over 5.seconds on 'time as 'w)
+    // group by window
+    val result: DataStream[Result] = orderA.window(Tumble over 5.seconds on 'time as 'w)
       .groupBy('w)
-      .select('w.start, 'time.cast(Types.LONG).min.cast(Types.SQL_TIMESTAMP) as 'first_time, 'amount.sum)
-      .toAppendStream[FinalResult]
+      .select('w.start, 'amount.sum)
+      .toAppendStream[Result]
 
     result.print()
 
@@ -68,8 +55,6 @@ object JoinAndGroupTableTimeWindowExample {
 
   case class UserInfo(id: Long, name: String, age: Int, ut: Timestamp)
 
-  case class Result(user: Long, product: String, amount: Int, name: String, age: Int, time: Timestamp)
-
-  case class FinalResult(startTime: Timestamp, firstTime: Timestamp, amount: Int)
+  case class Result(time: Timestamp, amount: Int)
 
 }

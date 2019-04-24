@@ -1,32 +1,26 @@
 import sbt.Keys._
+import sbtassembly.AssemblyKeys.{assemblyJarName, assemblyOption}
 
-// flink examples
-lazy val flink = project.in(file("flink")).settings(name := "flink").
-  settings(Common.settings: _*).
-  settings(libraryDependencies ++= Dependencies.test).
-  settings(libraryDependencies ++= Dependencies.flink)
 
-//// kafka producers for testing
-//lazy val kafka = project.in(file("kafka")).settings(name := "kafka").
-//  settings(Common.settingsIncludeScala: _*).
-//  settings(libraryDependencies ++= Dependencies.test).
-//  settings(libraryDependencies ++= Dependencies.kafka)
-//
-//// spark structured streaming examples
-//lazy val spark = project.in(file("spark")).settings(name := "spark").
-//  settings(Common.settings: _*).
-//  settings(libraryDependencies ++= Dependencies.test).
-//  settings(libraryDependencies ++= Dependencies.spark)
-//
-//// blink examples
-//lazy val blink = project.in(file("blink")).settings(name := "blink").
-//  settings(Common.settings: _*).
-//  settings(libraryDependencies ++= Dependencies.test).
-//  settings(libraryDependencies ++= Dependencies.blink)
+organization := "io.gx"
+name := "flink-demo"
+version := "0.1"
 
-// aggregate all sub projects
-lazy val all = (project in file(".")).settings(name := "all").
-  settings(Common.settings: _*).
-  aggregate(flink)
+scalaVersion := "2.11.8"
+javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-encoding", "UTF-8")
+scalacOptions ++= Seq("-deprecation", "-unchecked")
+
+assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeScala = false)
+assemblyJarName in assembly := s"${name.value}-${version.value}.jar"
+
+val flinkVersion = "1.8.0"
+
+libraryDependencies ++= Seq(
+  "org.apache.flink" %% "flink-scala" % flinkVersion % "provided",
+  "org.apache.flink" %% "flink-streaming-scala" % flinkVersion % "provided",
+  "org.apache.flink" %% "flink-table-planner" % flinkVersion,
+  "org.apache.flink" %% "flink-table-api-scala-bridge" % flinkVersion,
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test")
+
 
 

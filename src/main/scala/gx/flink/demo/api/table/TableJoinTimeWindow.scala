@@ -1,4 +1,4 @@
-package gx.flink.table
+package gx.flink.demo.api.table
 
 import java.sql.Timestamp
 import java.util.Date
@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.table.api.scala._
 
 
-object JoinTableTimeWindowExample {
+object TableJoinTimeWindow {
 
   // *************************************************************************
   //     PROGRAM

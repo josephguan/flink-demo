@@ -1,11 +1,11 @@
-package gx.flink.table
+package gx.flink.demo.api.table
 
 import org.apache.flink.api.scala._
 import org.apache.flink.streaming.api.scala.{DataStream, StreamExecutionEnvironment}
 import org.apache.flink.table.api.scala._
 
 
-object JoinTableExample {
+object TableJoin {
 
   // *************************************************************************
   //     PROGRAM
