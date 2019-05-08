@@ -14,6 +14,8 @@ Examples for Flink v1.8.0
 ```shell
 ├── api
 │   ├── sql
+│   │   └── SqlAggregationDistinct.scala
+│   │   └── SqlGroupByTimeWindow2.scala
 │   │   └── SqlJoinAndGroupByTimeWindow.scala
 │   └── table
 │       ├── TableAggregationOverWindow.scala
