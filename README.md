@@ -21,6 +21,7 @@ Examples for Flink v1.8.0
 │   │   └── TableAggregationOverWindow.scala
 │   │   └── TableGroupBy.scala
 │   │   └── TableGroupByTimeWindow.scala
+│   │   └── TableGroupByTimeWindowWithWatermark.scala
 │   │   └── TableJoin.scala
 │   │   └── TableJoinAndGroupByTimeWindow.scala
 │   │   └── TableJoinDimension.scala
